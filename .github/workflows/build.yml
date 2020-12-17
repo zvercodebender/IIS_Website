@@ -1,0 +1,24 @@
+name: Build-IIS_Website
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build-IIS_Website-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: oprypin/find-latest-tag@v1
+        with:
+          repository: zvercodebender/IIS_Website  # The repository to scan.
+          releases-only: false  # We know that all relevant tags have a GitHub release for them.
+        id: tagkit  # The step ID to refer to later.
+
+      - run: echo "IIS_Website is at version ${{ steps.tagkit.outputs.tag }}"
+      - uses: actions/checkout@v2
+      - name: build
+        env:
+          XLD_USER: ${{ secrets.XLD_USER }}
+          XLD_PASSWD: ${{ secrets.XLD_PASSWD }}
+          XLD_URL: "http://xld.rbroker.linkpc.net"
+          VERSION: ${{ steps.tagkit.outputs.tag }}
+        run: ./build.sh
