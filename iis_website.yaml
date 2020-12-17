@@ -1,0 +1,26 @@
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- directory: Applications/WindowsHosts
+
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- name: Applications/WindowsHosts/IIS_Website
+  type: udm.Application
+
+---
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- name: !format Applications/WindowsHosts/IIS_Website/%version%
+  type: udm.DeploymentPackage
+  deployables:
+  - name: iisroot
+    type: iis.WebContent
+    fileEncodings:
+      ".+\\.properties": ISO-8859-1
+    targetPath: C:\inetpub\wwwroot
+    file: !file "artifacts/iisroot.zip"
